@@ -6,17 +6,24 @@ class Table:
         self.is_active = True
 
     def can_seat(self, person_count: int) -> bool:
-        # TODO: Prüfen, ob die Personenzahl zwischen min_people und seats liegt.
-        pass
+        """Checks if the amount of people can be seated at the table"""
+        if self.is_active:
+            if person_count < self.min_people or person_count > self.seats:
+                return False
+            else:
+                return True
+        return False
 
     def get_info(self) -> str:
-        # TODO: Allgemeine Tischinformationen zurückgeben.
-        pass
+        return (
+            f"Tisch {self.table_number}: "
+            f"{self.seats} Plätze, "
+            f"mindestens {self.min_people} Personen, "
+            f"aktiv: {'Ja' if self.is_active else 'Nein'}"
+        )
 
     def activate(self) -> None:
-        # TODO: Tisch wieder für Reservierungen aktivieren.
-        pass
+        self.is_active = True
 
     def deactivate(self) -> None:
-        # TODO: Tisch für Reservierungen sperren.
-        pass
+        self.is_active = False

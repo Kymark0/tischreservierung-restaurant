@@ -17,5 +17,12 @@ class IndoorTable(Table):
         self.has_power_outlet = has_power_outlet
 
     def get_info(self) -> str:
-        # TODO: Informationen zum Innentisch zurückgeben.
-        pass
+        return (
+            f"Innentisch {self.table_number}: "
+            f"{self.seats} Plätze, "
+            f"mindestens {self.min_people} Personen, "
+            f"Fensterplatz: {'Ja' if self.is_near_window else 'Nein'}, "
+            f"ruhiger Bereich: {'Ja' if self.is_quiet_area else 'Nein'}, "
+            f"Steckdose: {'Ja' if self.has_power_outlet else 'Nein'}, "
+            f"aktiv: {'Ja' if self.is_active else 'Nein'}"
+        )

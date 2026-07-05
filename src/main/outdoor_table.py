@@ -19,5 +19,13 @@ class OutdoorTable(Table):
         self.allows_smoking = allows_smoking
 
     def get_info(self) -> str:
-        # TODO: Informationen zum Außentisch zurückgeben.
-        pass
+        return (
+            f"Außentisch {self.table_number}: "
+            f"{self.seats} Plätze, "
+            f"mindestens {self.min_people} Personen, "
+            f"Heizstrahler: {'Ja' if self.has_heater else 'Nein'}, "
+            f"Regenschutz: {'Ja' if self.is_rainproof else 'Nein'}, "
+            f"Windschutz: {'Ja' if self.is_windproof else 'Nein'}, "
+            f"Raucherbereich: {'Ja' if self.allows_smoking else 'Nein'}, "
+            f"aktiv: {'Ja' if self.is_active else 'Nein'}"
+        )
