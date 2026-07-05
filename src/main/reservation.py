@@ -24,13 +24,20 @@ class Reservation:
         self.status = status
 
     def cancel(self) -> None:
-        # TODO: Status der Reservierung auf storniert setzen.
-        pass
+        self.status = "storneirt"
 
     def is_active(self) -> bool:
-        # TODO: Prüfen, ob die Reservierung aktiv ist.
-        pass
+        if self.status == "aktiv":
+            return True
+        return False
 
     def get_info(self) -> str:
-        # TODO: Reservierungsdaten formatiert zurückgeben.
-        pass
+        return (
+            f"Reservierung {self.reservation_id}: "
+            f"{self.customer.name}, "
+            f"{self.person_count} Personen, "
+            f"Datum: {self.date.strftime('%d.%m.%Y')}, "
+            f"Uhrzeit: {self.time.strftime('%H:%M')}, "
+            f"Tisch: {self.table_number}, "
+            f"Status: {self.status}"
+        )

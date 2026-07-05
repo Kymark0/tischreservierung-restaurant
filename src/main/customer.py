@@ -5,5 +5,8 @@ class Customer:
         self.email = email
 
     def get_info(self) -> str:
-        # TODO: Kundendaten formatiert zurückgeben.
-        pass
+        return (
+                f"{self.name}, "
+                f"Telefon: {self.phone_number}, "
+                f"E-Mail: {self.email}"
+            )
