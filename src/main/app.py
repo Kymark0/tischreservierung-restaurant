@@ -1,8 +1,10 @@
 import streamlit as st
 
-from reservation_system import ReservationSystem
+from customer import Customer
 from indoor_table import IndoorTable
 from outdoor_table import OutdoorTable
+from reservation_system import ReservationSystem
+
 
 st.set_page_config(
     page_title="Restaurant-Tischreservierung",
@@ -24,6 +26,7 @@ tab_tables, tab_create_reservation, tab_show_reservations, tab_cancel = st.tabs(
         "Reservierung stornieren"
     ]
 )
+
 
 with tab_tables:
     st.header("Tische verwalten")
@@ -118,12 +121,94 @@ with tab_tables:
 with tab_create_reservation:
     st.header("Reservierung erstellen")
 
-    st.write(
-        "Hier kann später eine Reservierung mit Kundendaten, Datum, Uhrzeit, "
-        "Personenzahl und Tischwünschen erstellt werden."
-    )
+    if len(reservation_system.tables) == 0:
+        st.warning(
+            "Es wurden noch keine Tische angelegt. "
+            "Bitte lege zuerst mindestens einen Tisch an."
+        )
+    else:
+        st.subheader("Kundendaten")
 
-    st.info("TODO: Formular zum Erstellen einer Reservierung ergänzen.")
+        customer_name = st.text_input("Name des Kunden")
+        phone_number = st.text_input("Telefonnummer")
+        email = st.text_input("E-Mail-Adresse optional")
+
+        st.subheader("Reservierungsdaten")
+
+        reservation_date = st.date_input("Datum")
+        reservation_time = st.time_input("Uhrzeit")
+
+        person_count = st.number_input(
+            "Personenzahl",
+            min_value=1,
+            step=1
+        )
+
+        st.subheader("Tischwünsche")
+
+        preferred_area = st.selectbox(
+            "Gewünschter Bereich",
+            ["Egal", "Innen", "Außen"]
+        )
+
+        wants_window = False
+        wants_quiet_area = False
+        wants_power_outlet = False
+
+        wants_heater = False
+        wants_rainproof = False
+        wants_windproof = False
+        smoking_preference = "Egal"
+
+        if preferred_area == "Innen":
+            wants_window = st.checkbox("Fensterplatz gewünscht")
+            wants_quiet_area = st.checkbox("Ruhiger Bereich gewünscht")
+            wants_power_outlet = st.checkbox("Steckdose gewünscht")
+
+        elif preferred_area == "Außen":
+            wants_heater = st.checkbox("Heizstrahler gewünscht")
+            wants_rainproof = st.checkbox("Regengeschützter Tisch gewünscht")
+            wants_windproof = st.checkbox("Windgeschützter Tisch gewünscht")
+
+            smoking_preference = st.selectbox(
+                "Raucherbereich",
+                ["Egal", "Raucherbereich", "Nichtraucherbereich"]
+            )
+
+        if st.button("Reservierung erstellen"):
+            if customer_name.strip() == "":
+                st.error("Bitte gib einen Kundennamen ein.")
+            elif phone_number.strip() == "":
+                st.error("Bitte gib eine Telefonnummer ein.")
+            else:
+                customer = Customer(
+                    name=customer_name,
+                    phone_number=phone_number,
+                    email=email
+                )
+
+                reservation = reservation_system.create_reservation(
+                    customer=customer,
+                    date=reservation_date,
+                    time=reservation_time,
+                    person_count=person_count,
+                    preferred_area=preferred_area,
+                    wants_window=wants_window,
+                    wants_quiet_area=wants_quiet_area,
+                    wants_power_outlet=wants_power_outlet,
+                    wants_heater=wants_heater,
+                    wants_rainproof=wants_rainproof,
+                    wants_windproof=wants_windproof,
+                    smoking_preference=smoking_preference
+                )
+
+                if reservation is None:
+                    st.error("Es wurde kein passender freier Tisch gefunden.")
+                else:
+                    st.success(
+                        f"Reservierung wurde erstellt. "
+                        f"Zugewiesener Tisch: {reservation.table_number}"
+                    )
 
 
 with tab_show_reservations:
