@@ -214,20 +214,61 @@ with tab_create_reservation:
 with tab_show_reservations:
     st.header("Reservierungen anzeigen")
 
-    st.write("Hier werden später alle Reservierungen angezeigt.")
-
     if len(reservation_system.reservations) == 0:
         st.warning("Es wurden noch keine Reservierungen erstellt.")
     else:
+        reservation_data = []
+
         for reservation in reservation_system.reservations:
-            st.write(reservation.get_info())
+            reservation_data.append(
+                {
+                    "Reservierungs-ID": reservation.reservation_id,
+                    "Kunde": reservation.customer.name,
+                    "Telefonnummer": reservation.customer.phone_number,
+                    "E-Mail": reservation.customer.email,
+                    "Datum": reservation.date.strftime("%d.%m.%Y"),
+                    "Uhrzeit": reservation.time.strftime("%H:%M"),
+                    "Personen": reservation.person_count,
+                    "Tisch": reservation.table_number,
+                    "Status": reservation.status
+                }
+            )
+
+        st.table(reservation_data)
 
 
 with tab_cancel:
     st.header("Reservierung stornieren")
 
-    st.write(
-        "Hier kann später eine Reservierung über ihre Reservierungs-ID storniert werden."
-    )
+    active_reservations = reservation_system.get_active_reservations()
 
-    st.info("TODO: Formular zum Stornieren einer Reservierung ergänzen.")
+    if len(active_reservations) == 0:
+        st.warning("Es gibt keine aktiven Reservierungen zum Stornieren.")
+    else:
+        reservation_options = {}
+
+        for reservation in active_reservations:
+            label = (
+                f"ID {reservation.reservation_id} | "
+                f"{reservation.customer.name} | "
+                f"{reservation.date.strftime('%d.%m.%Y')} | "
+                f"{reservation.time.strftime('%H:%M')} | "
+                f"Tisch {reservation.table_number}"
+            )
+
+            reservation_options[label] = reservation.reservation_id
+
+        selected_reservation = st.selectbox(
+            "Reservierung auswählen",
+            list(reservation_options.keys())
+        )
+
+        if st.button("Reservierung stornieren"):
+            reservation_id = reservation_options[selected_reservation]
+
+            success = reservation_system.cancel_reservation(reservation_id)
+
+            if success:
+                st.success("Reservierung wurde storniert.")
+            else:
+                st.error("Reservierung wurde nicht gefunden.")
