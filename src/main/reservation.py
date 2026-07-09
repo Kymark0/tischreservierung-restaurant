@@ -24,7 +24,7 @@ class Reservation:
         self.status = status
 
     def cancel(self) -> None:
-        self.status = "storneirt"
+        self.status = "storniert"
 
     def is_active(self) -> bool:
         if self.status == "aktiv":

@@ -68,7 +68,7 @@ class ReservationSystem:
                 if wants_quiet_area and not table.is_quiet_area:
                     continue
 
-                if wants_power_outlet and not table.is_quiet_area:
+                if wants_power_outlet and not table.has_power_outlet:
                     continue
 
             if isinstance(table, OutdoorTable):
