@@ -1,10 +1,14 @@
 import streamlit as st
+import re
 
 from customer import Customer
 from indoor_table import IndoorTable
 from outdoor_table import OutdoorTable
 from reservation_system import ReservationSystem
 
+def is_valid_email(email: str) -> bool:
+    email_pattern = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
+    return re.match(email_pattern, email) is not None
 
 st.set_page_config(
     page_title="Restaurant-Tischreservierung",
@@ -178,8 +182,16 @@ with tab_create_reservation:
         if st.button("Reservierung erstellen"):
             if customer_name.strip() == "":
                 st.error("Bitte gib einen Kundennamen ein.")
-            elif phone_number.strip() == "":
+
+            elif phone_number == "":
                 st.error("Bitte gib eine Telefonnummer ein.")
+
+            elif not phone_number.isdigit():
+                st.error("Die Telefonnummer darf nur Zahlen enthalten.")
+
+            elif email != "" and not is_valid_email(email):
+                st.error("Bitte gib eine gültige E-Mail-Adresse ein.")
+
             else:
                 customer = Customer(
                     name=customer_name,
