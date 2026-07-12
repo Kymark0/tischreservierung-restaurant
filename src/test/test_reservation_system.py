@@ -264,3 +264,26 @@ def test_add_table_rejects_duplicate_table_number() -> None:
     assert second_result is False
     assert len(system.tables) == 1
     assert system.tables[0] == first_table
+
+def test_remove_table_removes_existing_table() -> None:
+    system = ReservationSystem()
+    table = IndoorTable(table_number=1, seats=4, min_people=1)
+
+    system.add_table(table)
+
+    result = system.remove_table(1)
+
+    assert result is True
+    assert len(system.tables) == 0
+
+
+def test_remove_table_returns_false_for_unknown_table() -> None:
+    system = ReservationSystem()
+    table = IndoorTable(table_number=1, seats=4, min_people=1)
+
+    system.add_table(table)
+
+    result = system.remove_table(2)
+
+    assert result is False
+    assert len(system.tables) == 1

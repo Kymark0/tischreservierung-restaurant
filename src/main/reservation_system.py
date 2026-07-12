@@ -21,7 +21,15 @@ class ReservationSystem:
 
         self.tables.append(table)
         return True
+    
+    def remove_table(self, table_number: int) -> bool:
+        for table in self.tables:
+            if table.table_number == table_number:
+                self.tables.remove(table)
+                return True
 
+        return False
+    
     def is_table_available(
         self,
         table_number: int,

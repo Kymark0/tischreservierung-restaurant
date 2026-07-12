@@ -17,6 +17,10 @@ st.set_page_config(
 
 st.title("Restaurant-Tischreservierung")
 
+if "success_message" in st.session_state:
+    st.success(st.session_state.success_message)
+    del st.session_state.success_message
+
 if "reservation_system" not in st.session_state:
     st.session_state.reservation_system = ReservationSystem()
 
@@ -112,20 +116,29 @@ with tab_tables:
     if len(reservation_system.tables) == 0:
         st.warning("Es wurden noch keine Tische angelegt.")
     else:
-        table_data = []
-
         for table in reservation_system.tables:
-            table_data.append(
-                {
-                    "Tischnummer": table.table_number,
-                    "Sitzplätze": table.seats,
-                    "Mindestpersonen": table.min_people,
-                    "Aktiv": "Ja" if table.is_active else "Nein",
-                    "Informationen": table.get_info()
-                }
-            )
+            col_info, col_delete = st.columns([5, 1])
 
-        st.table(table_data)
+            with col_info:
+                st.write(f"**Tisch {table.table_number}**")
+                st.write(
+                    f"Sitzplätze: {table.seats} | "
+                    f"Mindestpersonen: {table.min_people} | "
+                    f"Aktiv: {'Ja' if table.is_active else 'Nein'}"
+                )
+                st.caption(table.get_info())
+
+            with col_delete:
+                if st.button("Löschen", key=f"delete_table_{table.table_number}"):
+                    success = reservation_system.remove_table(table.table_number)
+
+                    if success:
+                        st.session_state.success_message = "Tisch wurde gelöscht."
+                        st.rerun()
+                    else:
+                        st.error("Tisch wurde nicht gefunden.")
+
+            st.divider()
 
 
 with tab_create_reservation:
