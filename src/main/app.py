@@ -130,13 +130,19 @@ with tab_tables:
 
             with col_delete:
                 if st.button("Löschen", key=f"delete_table_{table.table_number}"):
-                    success = reservation_system.remove_table(table.table_number)
-
-                    if success:
-                        st.session_state.success_message = "Tisch wurde gelöscht."
-                        st.rerun()
+                    if reservation_system.has_reservations_for_table(table.table_number):
+                        st.error(
+                            "Dieser Tisch kann nicht gelöscht werden, "
+                            "weil dafür Reservierungen existieren."
+                        )
                     else:
-                        st.error("Tisch wurde nicht gefunden.")
+                        success = reservation_system.remove_table(table.table_number)
+
+                        if success:
+                            st.session_state.success_message = "Tisch wurde gelöscht."
+                            st.rerun()
+                        else:
+                            st.error("Tisch wurde nicht gefunden.")
 
             st.divider()
 

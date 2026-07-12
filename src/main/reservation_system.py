@@ -23,6 +23,9 @@ class ReservationSystem:
         return True
     
     def remove_table(self, table_number: int) -> bool:
+        if self.has_reservations_for_table(table_number):
+            return False
+
         for table in self.tables:
             if table.table_number == table_number:
                 self.tables.remove(table)
@@ -191,3 +194,13 @@ class ReservationSystem:
                 active_reservations.append(reservation)
 
         return active_reservations
+    
+    def has_reservations_for_table(self, table_number: int) -> bool:
+        for reservation in self.reservations:
+            if (
+                reservation.table_number == table_number
+                and reservation.is_active()
+            ):
+                return True
+
+        return False
