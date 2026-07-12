@@ -250,3 +250,17 @@ def test_find_available_table_with_some_but_not_all_preferences() -> None:
     )
 
     assert table == table_with_power_outlet
+
+def test_add_table_rejects_duplicate_table_number() -> None:
+    system = ReservationSystem()
+
+    first_table = IndoorTable(table_number=1, seats=4, min_people=1)
+    second_table = IndoorTable(table_number=1, seats=6, min_people=1)
+
+    first_result = system.add_table(first_table)
+    second_result = system.add_table(second_table)
+
+    assert first_result is True
+    assert second_result is False
+    assert len(system.tables) == 1
+    assert system.tables[0] == first_table

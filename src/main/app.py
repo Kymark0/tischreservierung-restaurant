@@ -76,9 +76,12 @@ with tab_tables:
                 has_power_outlet=has_power_outlet
             )
 
-            reservation_system.add_table(table)
+            success = reservation_system.add_table(table)
 
-            st.success("Innentisch wurde hinzugefügt.")
+            if success:
+                st.success("Innentisch wurde hinzugefügt.")
+            else:
+                st.error("Es existiert bereits ein Tisch mit dieser Tischnummer.")
 
     else:
         has_heater = st.checkbox("Heizstrahler vorhanden")
@@ -97,9 +100,12 @@ with tab_tables:
                 allows_smoking=allows_smoking
             )
 
-            reservation_system.add_table(table)
+            success = reservation_system.add_table(table)
 
-            st.success("Außentisch wurde hinzugefügt.")
+            if success:
+                st.success("Außentisch wurde hinzugefügt.")
+            else:
+                st.error("Es existiert bereits ein Tisch mit dieser Tischnummer.")
 
     st.subheader("Vorhandene Tische")
 

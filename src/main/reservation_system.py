@@ -14,8 +14,13 @@ class ReservationSystem:
         self.reservations: list[Reservation] = []
         self.next_reservation_id = 1
 
-    def add_table(self, table: Table) -> None:
+    def add_table(self, table: Table) -> bool:
+        for existing_table in self.tables:
+            if existing_table.table_number == table.table_number:
+                return False
+
         self.tables.append(table)
+        return True
 
     def is_table_available(
         self,
