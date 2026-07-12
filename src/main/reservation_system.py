@@ -14,9 +14,25 @@ class ReservationSystem:
         self.reservations: list[Reservation] = []
         self.next_reservation_id = 1
 
-    def add_table(self, table: Table) -> None:
-        self.tables.append(table)
+    def add_table(self, table: Table) -> bool:
+        for existing_table in self.tables:
+            if existing_table.table_number == table.table_number:
+                return False
 
+        self.tables.append(table)
+        return True
+    
+    def remove_table(self, table_number: int) -> bool:
+        if self.has_reservations_for_table(table_number):
+            return False
+
+        for table in self.tables:
+            if table.table_number == table_number:
+                self.tables.remove(table)
+                return True
+
+        return False
+    
     def is_table_available(
         self,
         table_number: int,
@@ -178,3 +194,33 @@ class ReservationSystem:
                 active_reservations.append(reservation)
 
         return active_reservations
+    
+    def has_reservations_for_table(self, table_number: int) -> bool:
+        for reservation in self.reservations:
+            if (
+                reservation.table_number == table_number
+                and reservation.is_active()
+            ):
+                return True
+
+        return False
+    
+    def activate_table(self, table_number: int) -> bool:
+        for table in self.tables:
+            if table.table_number == table_number:
+                table.activate()
+                return True
+
+        return False
+
+
+    def deactivate_table(self, table_number: int) -> bool:
+        if self.has_reservations_for_table(table_number):
+            return False
+
+        for table in self.tables:
+            if table.table_number == table_number:
+                table.deactivate()
+                return True
+
+        return False

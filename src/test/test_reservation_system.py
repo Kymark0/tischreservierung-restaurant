@@ -250,3 +250,111 @@ def test_find_available_table_with_some_but_not_all_preferences() -> None:
     )
 
     assert table == table_with_power_outlet
+
+def test_add_table_rejects_duplicate_table_number() -> None:
+    system = ReservationSystem()
+
+    first_table = IndoorTable(table_number=1, seats=4, min_people=1)
+    second_table = IndoorTable(table_number=1, seats=6, min_people=1)
+
+    first_result = system.add_table(first_table)
+    second_result = system.add_table(second_table)
+
+    assert first_result is True
+    assert second_result is False
+    assert len(system.tables) == 1
+    assert system.tables[0] == first_table
+
+def test_remove_table_removes_existing_table() -> None:
+    system = ReservationSystem()
+    table = IndoorTable(table_number=1, seats=4, min_people=1)
+
+    system.add_table(table)
+
+    result = system.remove_table(1)
+
+    assert result is True
+    assert len(system.tables) == 0
+
+
+def test_remove_table_returns_false_for_unknown_table() -> None:
+    system = ReservationSystem()
+    table = IndoorTable(table_number=1, seats=4, min_people=1)
+
+    system.add_table(table)
+
+    result = system.remove_table(2)
+
+    assert result is False
+    assert len(system.tables) == 1
+
+def test_remove_table_fails_when_table_has_reservation() -> None:
+    system = ReservationSystem()
+    table = IndoorTable(table_number=1, seats=4, min_people=1)
+    customer = Customer(
+        name="Max Mustermann",
+        phone_number="0123456789"
+    )
+
+    system.add_table(table)
+
+    reservation = system.create_reservation(
+        customer=customer,
+        date=Date(2026, 7, 10),
+        time=Time(18, 0),
+        person_count=2
+    )
+
+    result = system.remove_table(1)
+
+    assert reservation is not None
+    assert result is False
+    assert len(system.tables) == 1
+    assert system.tables[0] == table
+
+def test_deactivate_table_sets_table_inactive() -> None:
+    system = ReservationSystem()
+    table = IndoorTable(table_number=1, seats=4, min_people=1)
+
+    system.add_table(table)
+
+    result = system.deactivate_table(1)
+
+    assert result is True
+    assert table.is_active is False
+
+
+def test_activate_table_sets_table_active() -> None:
+    system = ReservationSystem()
+    table = IndoorTable(table_number=1, seats=4, min_people=1)
+
+    system.add_table(table)
+    table.deactivate()
+
+    result = system.activate_table(1)
+
+    assert result is True
+    assert table.is_active is True
+
+def test_deactivate_table_fails_when_table_has_active_reservation() -> None:
+    system = ReservationSystem()
+    table = IndoorTable(table_number=1, seats=4, min_people=1)
+    customer = Customer(
+        name="Max Mustermann",
+        phone_number="0123456789"
+    )
+
+    system.add_table(table)
+
+    reservation = system.create_reservation(
+        customer=customer,
+        date=Date(2026, 7, 10),
+        time=Time(18, 0),
+        person_count=2
+    )
+
+    result = system.deactivate_table(1)
+
+    assert reservation is not None
+    assert result is False
+    assert table.is_active is True
