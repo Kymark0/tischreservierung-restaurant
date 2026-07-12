@@ -32,7 +32,9 @@ tab_tables, tab_create_reservation, tab_show_reservations, tab_cancel = st.tabs(
         "Reservierung erstellen",
         "Reservierungen anzeigen",
         "Reservierung stornieren"
-    ]
+    ],
+    key="active_tab",
+    on_change="rerun"
 )
 
 
@@ -117,8 +119,7 @@ with tab_tables:
         st.warning("Es wurden noch keine Tische angelegt.")
     else:
         for table in reservation_system.tables:
-            col_info, col_delete = st.columns([5, 1])
-
+            col_info, col_status, col_delete = st.columns([4, 1, 1])
             with col_info:
                 st.write(f"**Tisch {table.table_number}**")
                 st.write(
@@ -127,6 +128,32 @@ with tab_tables:
                     f"Aktiv: {'Ja' if table.is_active else 'Nein'}"
                 )
                 st.caption(table.get_info())
+
+            with col_status:
+                if table.is_active:
+                    if st.button("Deaktivieren", key=f"deactivate_table_{table.table_number}"):
+                        if reservation_system.has_reservations_for_table(table.table_number):
+                            st.error(
+                                "Dieser Tisch kann nicht deaktiviert werden, "
+                                "weil dafür aktive Reservierungen existieren."
+                            )
+                        else:
+                            success = reservation_system.deactivate_table(table.table_number)
+
+                            if success:
+                                st.session_state.success_message = "Tisch wurde deaktiviert."
+                                st.rerun()
+                            else:
+                                st.error("Tisch wurde nicht gefunden.")
+                else:
+                    if st.button("Aktivieren", key=f"activate_table_{table.table_number}"):
+                        success = reservation_system.activate_table(table.table_number)
+
+                        if success:
+                            st.session_state.success_message = "Tisch wurde aktiviert."
+                            st.rerun()
+                        else:
+                            st.error("Tisch wurde nicht gefunden.")
 
             with col_delete:
                 if st.button("Löschen", key=f"delete_table_{table.table_number}"):

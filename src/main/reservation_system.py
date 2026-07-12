@@ -204,3 +204,23 @@ class ReservationSystem:
                 return True
 
         return False
+    
+    def activate_table(self, table_number: int) -> bool:
+        for table in self.tables:
+            if table.table_number == table_number:
+                table.activate()
+                return True
+
+        return False
+
+
+    def deactivate_table(self, table_number: int) -> bool:
+        if self.has_reservations_for_table(table_number):
+            return False
+
+        for table in self.tables:
+            if table.table_number == table_number:
+                table.deactivate()
+                return True
+
+        return False
