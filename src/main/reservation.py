@@ -13,6 +13,7 @@ class Reservation:
         time: Time,
         person_count: int,
         table_number: int,
+        duration_hours: int = 1,
         status: str = "aktiv"
     ) -> None:
         self.reservation_id = reservation_id
@@ -21,6 +22,7 @@ class Reservation:
         self.time = time
         self.person_count = person_count
         self.table_number = table_number
+        self.duration_hours = duration_hours
         self.status = status
 
     def cancel(self) -> None:
@@ -38,6 +40,7 @@ class Reservation:
             f"{self.person_count} Personen, "
             f"Datum: {self.date.strftime('%d.%m.%Y')}, "
             f"Uhrzeit: {self.time.strftime('%H:%M')}, "
+            f"Dauer: {self.duration_hours} Stunde(n), "
             f"Tisch: {self.table_number}, "
             f"Status: {self.status}"
         )

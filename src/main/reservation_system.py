@@ -1,5 +1,6 @@
 from datetime import date as Date
 from datetime import time as Time
+from datetime import datetime, timedelta
 
 from customer import Customer
 from reservation import Reservation
@@ -32,20 +33,22 @@ class ReservationSystem:
                 return True
 
         return False
-    
-    def is_table_available(
-        self,
-        table_number: int,
-        date: Date,
-        time: Time
-    ) -> bool:
+
+    def is_table_available(self, table_number: int, date: Date, time: Time, duration_hours: int = 1) -> bool:
+        new_start = datetime.combine(date, time)
+        new_end = new_start + timedelta(hours=duration_hours)
+
         for reservation in self.reservations:
-            if (
-                reservation.table_number == table_number
-                and reservation.date == date
-                and reservation.time == time
-                and reservation.is_active()
-            ):
+            if reservation.table_number != table_number:
+                continue
+
+            if not reservation.is_active():
+                continue
+
+            existing_start = datetime.combine(reservation.date, reservation.time)
+            existing_end = existing_start + timedelta(hours=reservation.duration_hours)
+
+            if new_start < existing_end and new_end > existing_start:
                 return False
 
         return True
@@ -55,6 +58,7 @@ class ReservationSystem:
         date: Date,
         time: Time,
         person_count: int,
+        duration_hours: int = 1,
         preferred_area: str = "Egal",
         wants_window: bool = False,
         wants_quiet_area: bool = False,
@@ -65,10 +69,13 @@ class ReservationSystem:
         smoking_preference: str = "Egal"
     ) -> Table | None:
         for table in self.tables:
+            if not table.is_active:
+                continue
+
             if not table.can_seat(person_count):
                 continue
 
-            if not self.is_table_available(table.table_number, date, time):
+            if not self.is_table_available(table.table_number, date, time, duration_hours):
                 continue
 
             if preferred_area == "Innen" and not isinstance(table, IndoorTable):
@@ -131,13 +138,13 @@ class ReservationSystem:
 
         return None
 
-
     def create_reservation(
         self,
         customer: Customer,
         date: Date,
         time: Time,
         person_count: int,
+        duration_hours: int = 1,
         preferred_area: str = "Egal",
         wants_window: bool = False,
         wants_quiet_area: bool = False,
@@ -151,6 +158,7 @@ class ReservationSystem:
             date,
             time,
             person_count,
+            duration_hours,
             preferred_area,
             wants_window,
             wants_quiet_area,
@@ -170,7 +178,8 @@ class ReservationSystem:
             date,
             time,
             person_count,
-            table.table_number
+            table.table_number,
+            duration_hours
         )
 
         self.reservations.append(reservation)
@@ -212,7 +221,6 @@ class ReservationSystem:
                 return True
 
         return False
-
 
     def deactivate_table(self, table_number: int) -> bool:
         if self.has_reservations_for_table(table_number):

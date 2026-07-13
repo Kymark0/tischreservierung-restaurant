@@ -120,6 +120,7 @@ with tab_tables:
     else:
         for table in reservation_system.tables:
             col_info, col_status, col_delete = st.columns([4, 1, 1])
+
             with col_info:
                 st.write(f"**Tisch {table.table_number}**")
                 st.write(
@@ -194,6 +195,12 @@ with tab_create_reservation:
         reservation_date = st.date_input("Datum")
         reservation_time = st.time_input("Uhrzeit")
 
+        duration_hours = st.number_input(
+            "Dauer in Stunden",
+            min_value=1,
+            step=1
+        )
+
         person_count = st.number_input(
             "Personenzahl",
             min_value=1,
@@ -256,6 +263,7 @@ with tab_create_reservation:
                     date=reservation_date,
                     time=reservation_time,
                     person_count=person_count,
+                    duration_hours=duration_hours,
                     preferred_area=preferred_area,
                     wants_window=wants_window,
                     wants_quiet_area=wants_quiet_area,
@@ -292,6 +300,7 @@ with tab_show_reservations:
                     "E-Mail": reservation.customer.email,
                     "Datum": reservation.date.strftime("%d.%m.%Y"),
                     "Uhrzeit": reservation.time.strftime("%H:%M"),
+                    "Dauer": f"{reservation.duration_hours} Stunde(n)",
                     "Personen": reservation.person_count,
                     "Tisch": reservation.table_number,
                     "Status": reservation.status
@@ -317,6 +326,7 @@ with tab_cancel:
                 f"{reservation.customer.name} | "
                 f"{reservation.date.strftime('%d.%m.%Y')} | "
                 f"{reservation.time.strftime('%H:%M')} | "
+                f"{reservation.duration_hours} Stunde(n) | "
                 f"Tisch {reservation.table_number}"
             )
 

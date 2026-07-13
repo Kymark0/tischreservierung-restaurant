@@ -23,6 +23,7 @@ def test_reservation_stores_attributes() -> None:
     assert reservation.time == Time(18, 0)
     assert reservation.person_count == 4
     assert reservation.table_number == 3
+    assert reservation.duration_hours == 1
     assert reservation.status == "aktiv"
 
 
