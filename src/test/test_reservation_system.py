@@ -29,9 +29,7 @@ def test_is_table_available_returns_true_if_no_reservation_exists() -> None:
     system = ReservationSystem()
 
     result = system.is_table_available(
-        table_number=1,
-        date=Date(2026, 7, 10),
-        time=Time(18, 0)
+        table_number=1, date=Date(2026, 7, 10), time=Time(18, 0)
     )
 
     assert result is True
@@ -48,7 +46,7 @@ def test_create_reservation_adds_reservation() -> None:
         customer=customer,
         date=Date(2026, 7, 10),
         time=Time(18, 0),
-        person_count=2
+        person_count=2,
     )
 
     assert reservation is not None
@@ -58,7 +56,9 @@ def test_create_reservation_adds_reservation() -> None:
     assert system.next_reservation_id == 2
 
 
-def test_is_table_available_returns_false_if_active_reservation_exists() -> None:
+def test_is_table_available_returns_false_if_active_reservation_exists() -> (
+    None
+):
     system = ReservationSystem()
     table = IndoorTable(table_number=1, seats=4)
     customer = Customer("Max Mustermann", "0123456789")
@@ -69,13 +69,11 @@ def test_is_table_available_returns_false_if_active_reservation_exists() -> None
         customer=customer,
         date=Date(2026, 7, 10),
         time=Time(18, 0),
-        person_count=2
+        person_count=2,
     )
 
     result = system.is_table_available(
-        table_number=1,
-        date=Date(2026, 7, 10),
-        time=Time(18, 0)
+        table_number=1, date=Date(2026, 7, 10), time=Time(18, 0)
     )
 
     assert result is False
@@ -92,7 +90,7 @@ def test_create_reservation_returns_none_if_no_table_is_available() -> None:
         customer=customer,
         date=Date(2026, 7, 10),
         time=Time(18, 0),
-        person_count=5
+        person_count=5,
     )
 
     assert reservation is None
@@ -109,7 +107,7 @@ def test_cancel_reservation_changes_status() -> None:
         customer=customer,
         date=Date(2026, 7, 10),
         time=Time(18, 0),
-        person_count=2
+        person_count=2,
     )
 
     assert reservation is not None
@@ -133,14 +131,14 @@ def test_get_active_reservations_only_returns_active_reservations() -> None:
         customer=customer,
         date=Date(2026, 7, 10),
         time=Time(18, 0),
-        person_count=2
+        person_count=2,
     )
 
     reservation_2 = system.create_reservation(
         customer=customer,
         date=Date(2026, 7, 10),
         time=Time(19, 0),
-        person_count=2
+        person_count=2,
     )
 
     assert reservation_1 is not None
@@ -162,7 +160,7 @@ def test_find_available_table_filters_indoor_preferences() -> None:
         seats=4,
         is_near_window=False,
         is_quiet_area=False,
-        has_power_outlet=False
+        has_power_outlet=False,
     )
 
     matching_table = IndoorTable(
@@ -170,7 +168,7 @@ def test_find_available_table_filters_indoor_preferences() -> None:
         seats=4,
         is_near_window=True,
         is_quiet_area=True,
-        has_power_outlet=True
+        has_power_outlet=True,
     )
 
     system.add_table(wrong_table)
@@ -183,7 +181,7 @@ def test_find_available_table_filters_indoor_preferences() -> None:
         preferred_area="Innen",
         wants_window=True,
         wants_quiet_area=True,
-        wants_power_outlet=True
+        wants_power_outlet=True,
     )
 
     assert table == matching_table
@@ -198,7 +196,7 @@ def test_find_available_table_filters_outdoor_preferences() -> None:
         has_heater=False,
         is_rainproof=False,
         is_windproof=False,
-        allows_smoking=False
+        allows_smoking=False,
     )
 
     matching_table = OutdoorTable(
@@ -207,7 +205,7 @@ def test_find_available_table_filters_outdoor_preferences() -> None:
         has_heater=True,
         is_rainproof=True,
         is_windproof=True,
-        allows_smoking=True
+        allows_smoking=True,
     )
 
     system.add_table(wrong_table)
@@ -221,7 +219,7 @@ def test_find_available_table_filters_outdoor_preferences() -> None:
         wants_heater=True,
         wants_rainproof=True,
         wants_windproof=True,
-        smoking_preference="Raucherbereich"
+        smoking_preference="Raucherbereich",
     )
 
     assert table == matching_table
@@ -235,7 +233,7 @@ def test_find_available_table_with_some_but_not_all_preferences() -> None:
         seats=4,
         is_near_window=True,
         is_quiet_area=False,
-        has_power_outlet=True
+        has_power_outlet=True,
     )
 
     system.add_table(table_with_power_outlet)
@@ -246,10 +244,11 @@ def test_find_available_table_with_some_but_not_all_preferences() -> None:
         person_count=2,
         preferred_area="Innen",
         wants_window=True,
-        wants_power_outlet=True
+        wants_power_outlet=True,
     )
 
     assert table == table_with_power_outlet
+
 
 def test_add_table_rejects_duplicate_table_number() -> None:
     system = ReservationSystem()
@@ -264,6 +263,7 @@ def test_add_table_rejects_duplicate_table_number() -> None:
     assert second_result is False
     assert len(system.tables) == 1
     assert system.tables[0] == first_table
+
 
 def test_remove_table_removes_existing_table() -> None:
     system = ReservationSystem()
@@ -288,13 +288,11 @@ def test_remove_table_returns_false_for_unknown_table() -> None:
     assert result is False
     assert len(system.tables) == 1
 
+
 def test_remove_table_fails_when_table_has_reservation() -> None:
     system = ReservationSystem()
     table = IndoorTable(table_number=1, seats=4, min_people=1)
-    customer = Customer(
-        name="Max Mustermann",
-        phone_number="0123456789"
-    )
+    customer = Customer(name="Max Mustermann", phone_number="0123456789")
 
     system.add_table(table)
 
@@ -302,7 +300,7 @@ def test_remove_table_fails_when_table_has_reservation() -> None:
         customer=customer,
         date=Date(2026, 7, 10),
         time=Time(18, 0),
-        person_count=2
+        person_count=2,
     )
 
     result = system.remove_table(1)
@@ -311,6 +309,7 @@ def test_remove_table_fails_when_table_has_reservation() -> None:
     assert result is False
     assert len(system.tables) == 1
     assert system.tables[0] == table
+
 
 def test_deactivate_table_sets_table_inactive() -> None:
     system = ReservationSystem()
@@ -336,13 +335,11 @@ def test_activate_table_sets_table_active() -> None:
     assert result is True
     assert table.is_active is True
 
+
 def test_deactivate_table_fails_when_table_has_active_reservation() -> None:
     system = ReservationSystem()
     table = IndoorTable(table_number=1, seats=4, min_people=1)
-    customer = Customer(
-        name="Max Mustermann",
-        phone_number="0123456789"
-    )
+    customer = Customer(name="Max Mustermann", phone_number="0123456789")
 
     system.add_table(table)
 
@@ -350,7 +347,7 @@ def test_deactivate_table_fails_when_table_has_active_reservation() -> None:
         customer=customer,
         date=Date(2026, 7, 10),
         time=Time(18, 0),
-        person_count=2
+        person_count=2,
     )
 
     result = system.deactivate_table(1)

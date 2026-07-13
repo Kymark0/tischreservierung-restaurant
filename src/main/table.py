@@ -2,10 +2,7 @@ class Table:
     """Represents a general restaurant table."""
 
     def __init__(
-        self,
-        table_number: int,
-        seats: int,
-        min_people: int = 1
+        self, table_number: int, seats: int, min_people: int = 1
     ) -> None:
         """Create a table with number, seats and minimum people."""
         self.table_number = table_number

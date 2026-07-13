@@ -12,7 +12,7 @@ class OutdoorTable(Table):
         has_heater: bool = False,
         is_rainproof: bool = False,
         is_windproof: bool = False,
-        allows_smoking: bool = False
+        allows_smoking: bool = False,
     ) -> None:
         """Create an outdoor table with optional outdoor features."""
         super().__init__(table_number, seats, min_people)

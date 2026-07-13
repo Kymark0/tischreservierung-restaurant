@@ -11,7 +11,7 @@ class IndoorTable(Table):
         min_people: int = 1,
         is_near_window: bool = False,
         is_quiet_area: bool = False,
-        has_power_outlet: bool = False
+        has_power_outlet: bool = False,
     ) -> None:
         """Create an indoor table with optional preferences."""
         super().__init__(table_number, seats, min_people)

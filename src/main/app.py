@@ -14,10 +14,8 @@ def is_valid_email(email: str) -> bool:
     email_pattern = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
     return re.match(email_pattern, email) is not None
 
-st.set_page_config(
-    page_title="Restaurant-Tischreservierung",
-    layout="wide"
-)
+
+st.set_page_config(page_title="Restaurant-Tischreservierung", layout="wide")
 
 st.title("Restaurant-Tischreservierung")
 
@@ -30,15 +28,17 @@ if "reservation_system" not in st.session_state:
 
 reservation_system = st.session_state.reservation_system
 
-tab_tables, tab_create_reservation, tab_show_reservations, tab_cancel = st.tabs(
-    [
-        "Tische verwalten",
-        "Reservierung erstellen",
-        "Reservierungen anzeigen",
-        "Reservierung stornieren"
-    ],
-    key="active_tab",
-    on_change="rerun"
+tab_tables, tab_create_reservation, tab_show_reservations, tab_cancel = (
+    st.tabs(
+        [
+            "Tische verwalten",
+            "Reservierung erstellen",
+            "Reservierungen anzeigen",
+            "Reservierung stornieren",
+        ],
+        key="active_tab",
+        on_change="rerun",
+    )
 )
 
 
@@ -49,27 +49,15 @@ with tab_tables:
     st.subheader("Tisch hinzufügen")
 
     table_type = st.selectbox(
-        "Tischart auswählen",
-        ["Innentisch", "Außentisch"]
+        "Tischart auswählen", ["Innentisch", "Außentisch"]
     )
 
-    table_number = st.number_input(
-        "Tischnummer",
-        min_value=1,
-        step=1
-    )
+    table_number = st.number_input("Tischnummer", min_value=1, step=1)
 
-    seats = st.number_input(
-        "Sitzplätze",
-        min_value=1,
-        step=1
-    )
+    seats = st.number_input("Sitzplätze", min_value=1, step=1)
 
     min_people = st.number_input(
-        "Mindestanzahl Personen",
-        min_value=1,
-        max_value=seats,
-        step=1
+        "Mindestanzahl Personen", min_value=1, max_value=seats, step=1
     )
 
     if table_type == "Innentisch":
@@ -84,7 +72,7 @@ with tab_tables:
                 min_people=min_people,
                 is_near_window=is_near_window,
                 is_quiet_area=is_quiet_area,
-                has_power_outlet=has_power_outlet
+                has_power_outlet=has_power_outlet,
             )
 
             success = reservation_system.add_table(table)
@@ -93,8 +81,7 @@ with tab_tables:
                 st.success("Innentisch wurde hinzugefügt.")
             else:
                 st.error(
-                    "Es existiert bereits ein Tisch mit dieser "
-                    "Tischnummer."
+                    "Es existiert bereits ein Tisch mit dieser " "Tischnummer."
                 )
 
     else:
@@ -111,7 +98,7 @@ with tab_tables:
                 has_heater=has_heater,
                 is_rainproof=is_rainproof,
                 is_windproof=is_windproof,
-                allows_smoking=allows_smoking
+                allows_smoking=allows_smoking,
             )
 
             success = reservation_system.add_table(table)
@@ -120,8 +107,7 @@ with tab_tables:
                 st.success("Außentisch wurde hinzugefügt.")
             else:
                 st.error(
-                    "Es existiert bereits ein Tisch mit dieser "
-                    "Tischnummer."
+                    "Es existiert bereits ein Tisch mit dieser " "Tischnummer."
                 )
 
     # Overview and management area for existing tables.
@@ -146,7 +132,7 @@ with tab_tables:
                 if table.is_active:
                     if st.button(
                         "Deaktivieren",
-                        key=f"deactivate_table_{table.table_number}"
+                        key=f"deactivate_table_{table.table_number}",
                     ):
                         if reservation_system.has_reservations_for_table(
                             table.table_number
@@ -170,7 +156,7 @@ with tab_tables:
                 else:
                     if st.button(
                         "Aktivieren",
-                        key=f"activate_table_{table.table_number}"
+                        key=f"activate_table_{table.table_number}",
                     ):
                         success = reservation_system.activate_table(
                             table.table_number
@@ -186,8 +172,7 @@ with tab_tables:
 
             with col_delete:
                 if st.button(
-                    "Löschen",
-                    key=f"delete_table_{table.table_number}"
+                    "Löschen", key=f"delete_table_{table.table_number}"
                 ):
                     if reservation_system.has_reservations_for_table(
                         table.table_number
@@ -235,23 +220,16 @@ with tab_create_reservation:
         reservation_time = st.time_input("Uhrzeit")
 
         duration_hours = st.number_input(
-            "Dauer in Stunden",
-            min_value=1,
-            step=1
+            "Dauer in Stunden", min_value=1, step=1
         )
 
-        person_count = st.number_input(
-            "Personenzahl",
-            min_value=1,
-            step=1
-        )
+        person_count = st.number_input("Personenzahl", min_value=1, step=1)
 
         # Optional table preferences.
         st.subheader("Tischwünsche")
 
         preferred_area = st.selectbox(
-            "Gewünschter Bereich",
-            ["Egal", "Innen", "Außen"]
+            "Gewünschter Bereich", ["Egal", "Innen", "Außen"]
         )
 
         wants_window = False
@@ -270,16 +248,12 @@ with tab_create_reservation:
 
         elif preferred_area == "Außen":
             wants_heater = st.checkbox("Heizstrahler gewünscht")
-            wants_rainproof = st.checkbox(
-                "Regengeschützter Tisch gewünscht"
-            )
-            wants_windproof = st.checkbox(
-                "Windgeschützter Tisch gewünscht"
-            )
+            wants_rainproof = st.checkbox("Regengeschützter Tisch gewünscht")
+            wants_windproof = st.checkbox("Windgeschützter Tisch gewünscht")
 
             smoking_preference = st.selectbox(
                 "Raucherbereich",
-                ["Egal", "Raucherbereich", "Nichtraucherbereich"]
+                ["Egal", "Raucherbereich", "Nichtraucherbereich"],
             )
 
         if st.button("Reservierung erstellen"):
@@ -301,9 +275,7 @@ with tab_create_reservation:
 
             else:
                 customer = Customer(
-                    name=customer_name,
-                    phone_number=phone_number,
-                    email=email
+                    name=customer_name, phone_number=phone_number, email=email
                 )
 
                 reservation = reservation_system.create_reservation(
@@ -319,7 +291,7 @@ with tab_create_reservation:
                     wants_heater=wants_heater,
                     wants_rainproof=wants_rainproof,
                     wants_windproof=wants_windproof,
-                    smoking_preference=smoking_preference
+                    smoking_preference=smoking_preference,
                 )
 
                 if reservation is None:
@@ -351,7 +323,7 @@ with tab_show_reservations:
                     "Dauer": f"{reservation.duration_hours} Stunde(n)",
                     "Personen": reservation.person_count,
                     "Tisch": reservation.table_number,
-                    "Status": reservation.status
+                    "Status": reservation.status,
                 }
             )
 
@@ -381,8 +353,7 @@ with tab_cancel:
             reservation_options[label] = reservation.reservation_id
 
         selected_reservation = st.selectbox(
-            "Reservierung auswählen",
-            list(reservation_options.keys())
+            "Reservierung auswählen", list(reservation_options.keys())
         )
 
         if st.button("Reservierung stornieren"):

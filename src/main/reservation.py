@@ -16,7 +16,7 @@ class Reservation:
         person_count: int,
         table_number: int,
         duration_hours: int = 1,
-        status: str = "aktiv"
+        status: str = "aktiv",
     ) -> None:
         """Create a reservation with customer, time and table data."""
         self.reservation_id = reservation_id
