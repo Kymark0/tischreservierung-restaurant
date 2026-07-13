@@ -8,6 +8,7 @@ Die Anwendung wird mit Python umgesetzt und über Streamlit visualisiert. Der Fo
 
 * Innen- und Außentische anlegen
 * Tische mit Eigenschaften speichern
+* Tische aktivieren, deaktivieren und löschen
 * Reservierungen mit Kundendaten erstellen
 * passenden Tisch automatisch suchen
 * Reservierungen anzeigen
@@ -28,7 +29,7 @@ Das Projekt nutzt folgende zentrale Klassen:
 ## Projektstruktur
 
 ```text
-restaurant-reservation/
+tischreservierung-restaurant/
 ├── README.md
 ├── requirements.txt
 ├── start_app.py
@@ -84,4 +85,12 @@ python -m pytest src/test
 
 ## Hinweise
 
-Die Daten werden aktuell nur während der Laufzeit gespeichert. Wenn die Anwendung geschlossen wird, gehen angelegte Tische und Reservierungen verloren.
+Die Daten werden aktuell nur während der Laufzeit gespeichert. Wenn die Anwendung geschlossen wird, gehen angelegte Tische und Reservierungen verloren. Eine dauerhafte Speicherung über eine Datei oder Datenbank ist bewusst noch nicht umgesetzt und könnte später ergänzt werden.
+
+Reservierungen für vergangene Zeitpunkte werden aktuell nicht blockiert. Diese Entscheidung ist bewusst getroffen, da ein Restaurant bei der Einführung der Software eventuell bereits bestehende oder alte Reservierungen nachtragen muss.
+
+Das Projekt ist als Lernprojekt aufgebaut. Der Fokus liegt daher auf der objektorientierten Struktur, der Trennung von Klassen und Oberfläche sowie auf einfachen Tests der Kernlogik.
+
+## KI-Unterstützung
+
+Bei der Entwicklung wurde KI unterstützend eingesetzt, zum Beispiel zur Strukturierung des Codes, zur Fehlersuche und für Formulierungsvorschläge. Die Umsetzung, Anpassung und fachliche Entscheidung über die Funktionen wurden eigenständig vorgenommen.
