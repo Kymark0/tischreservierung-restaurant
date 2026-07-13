@@ -15,7 +15,7 @@ def test_indoor_table_stores_indoor_attributes() -> None:
         min_people=2,
         is_near_window=True,
         is_quiet_area=True,
-        has_power_outlet=True
+        has_power_outlet=True,
     )
 
     assert table.table_number == 1

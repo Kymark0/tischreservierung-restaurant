@@ -16,7 +16,7 @@ def test_outdoor_table_stores_outdoor_attributes() -> None:
         has_heater=True,
         is_rainproof=True,
         is_windproof=True,
-        allows_smoking=False
+        allows_smoking=False,
     )
 
     assert table.table_number == 2
