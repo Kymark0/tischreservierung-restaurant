@@ -52,6 +52,10 @@ tischreservierung-restaurant/
         ├── test_reservation.py
         └── test_reservation_system.py
 ```
+## Voraussetzungen
+
+- Python 3.10 oder neuer
+- Empfohlen und getestet: Python 3.11
 
 ## Installation
 
