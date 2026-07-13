@@ -1,21 +1,26 @@
 from datetime import date as Date
+from datetime import datetime
 from datetime import time as Time
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from customer import Customer
-from reservation import Reservation
-from table import Table
 from indoor_table import IndoorTable
 from outdoor_table import OutdoorTable
+from reservation import Reservation
+from table import Table
 
 
 class ReservationSystem:
+    """Manages tables and reservations for the restaurant."""
+
     def __init__(self) -> None:
+        """Create an empty reservation system."""
         self.tables: list[Table] = []
         self.reservations: list[Reservation] = []
         self.next_reservation_id = 1
 
     def add_table(self, table: Table) -> bool:
+        """Add a table if its table number does not already exist."""
         for existing_table in self.tables:
             if existing_table.table_number == table.table_number:
                 return False
@@ -24,6 +29,7 @@ class ReservationSystem:
         return True
     
     def remove_table(self, table_number: int) -> bool:
+        """Remove a table if it has no active reservations."""
         if self.has_reservations_for_table(table_number):
             return False
 
@@ -34,7 +40,14 @@ class ReservationSystem:
 
         return False
 
-    def is_table_available(self, table_number: int, date: Date, time: Time, duration_hours: int = 1) -> bool:
+    def is_table_available(
+        self,
+        table_number: int,
+        date: Date,
+        time: Time,
+        duration_hours: int = 1
+    ) -> bool:
+        """Check if a table is free for the requested time period."""
         new_start = datetime.combine(date, time)
         new_end = new_start + timedelta(hours=duration_hours)
 
@@ -45,8 +58,13 @@ class ReservationSystem:
             if not reservation.is_active():
                 continue
 
-            existing_start = datetime.combine(reservation.date, reservation.time)
-            existing_end = existing_start + timedelta(hours=reservation.duration_hours)
+            existing_start = datetime.combine(
+                reservation.date,
+                reservation.time
+            )
+            existing_end = existing_start + timedelta(
+                hours=reservation.duration_hours
+            )
 
             if new_start < existing_end and new_end > existing_start:
                 return False
@@ -68,6 +86,7 @@ class ReservationSystem:
         wants_windproof: bool = False,
         smoking_preference: str = "Egal"
     ) -> Table | None:
+        """Find a matching active table for a reservation request."""
         for table in self.tables:
             if not table.is_active:
                 continue
@@ -75,13 +94,24 @@ class ReservationSystem:
             if not table.can_seat(person_count):
                 continue
 
-            if not self.is_table_available(table.table_number, date, time, duration_hours):
+            if not self.is_table_available(
+                table.table_number,
+                date,
+                time,
+                duration_hours
+            ):
                 continue
 
-            if preferred_area == "Innen" and not isinstance(table, IndoorTable):
+            if preferred_area == "Innen" and not isinstance(
+                table,
+                IndoorTable
+            ):
                 continue
 
-            if preferred_area == "Außen" and not isinstance(table, OutdoorTable):
+            if preferred_area == "Außen" and not isinstance(
+                table,
+                OutdoorTable
+            ):
                 continue
 
             if isinstance(table, IndoorTable):
@@ -154,6 +184,7 @@ class ReservationSystem:
         wants_windproof: bool = False,
         smoking_preference: str = "Egal"
     ) -> Reservation | None:
+        """Create a reservation if a matching table is available."""
         table = self.find_available_table(
             date,
             time,
@@ -188,6 +219,7 @@ class ReservationSystem:
         return reservation
 
     def cancel_reservation(self, reservation_id: int) -> bool:
+        """Cancel a reservation by its reservation ID."""
         for reservation in self.reservations:
             if reservation.reservation_id == reservation_id:
                 reservation.cancel()
@@ -196,6 +228,7 @@ class ReservationSystem:
         return False
 
     def get_active_reservations(self) -> list[Reservation]:
+        """Return all reservations with active status."""
         active_reservations = []
 
         for reservation in self.reservations:
@@ -205,6 +238,7 @@ class ReservationSystem:
         return active_reservations
     
     def has_reservations_for_table(self, table_number: int) -> bool:
+        """Check if a table has active reservations."""
         for reservation in self.reservations:
             if (
                 reservation.table_number == table_number
@@ -215,6 +249,7 @@ class ReservationSystem:
         return False
     
     def activate_table(self, table_number: int) -> bool:
+        """Activate a table by its table number."""
         for table in self.tables:
             if table.table_number == table_number:
                 table.activate()
@@ -223,6 +258,7 @@ class ReservationSystem:
         return False
 
     def deactivate_table(self, table_number: int) -> bool:
+        """Deactivate a table if it has no active reservations."""
         if self.has_reservations_for_table(table_number):
             return False
 

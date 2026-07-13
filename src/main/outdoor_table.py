@@ -2,6 +2,8 @@ from table import Table
 
 
 class OutdoorTable(Table):
+    """Represents an outdoor table with additional outdoor properties."""
+
     def __init__(
         self,
         table_number: int,
@@ -12,6 +14,7 @@ class OutdoorTable(Table):
         is_windproof: bool = False,
         allows_smoking: bool = False
     ) -> None:
+        """Create an outdoor table with optional outdoor features."""
         super().__init__(table_number, seats, min_people)
         self.has_heater = has_heater
         self.is_rainproof = is_rainproof
@@ -19,6 +22,7 @@ class OutdoorTable(Table):
         self.allows_smoking = allows_smoking
 
     def get_info(self) -> str:
+        """Return the outdoor table information as a formatted string."""
         return (
             f"Außentisch {self.table_number}: "
             f"{self.seats} Plätze, "

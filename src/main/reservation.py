@@ -5,6 +5,8 @@ from customer import Customer
 
 
 class Reservation:
+    """Represents a restaurant reservation for one customer and table."""
+
     def __init__(
         self,
         reservation_id: int,
@@ -16,6 +18,7 @@ class Reservation:
         duration_hours: int = 1,
         status: str = "aktiv"
     ) -> None:
+        """Create a reservation with customer, time and table data."""
         self.reservation_id = reservation_id
         self.customer = customer
         self.date = date
@@ -26,14 +29,18 @@ class Reservation:
         self.status = status
 
     def cancel(self) -> None:
+        """Cancel the reservation by changing its status."""
         self.status = "storniert"
 
     def is_active(self) -> bool:
+        """Return True if the reservation is active."""
         if self.status == "aktiv":
             return True
+
         return False
 
     def get_info(self) -> str:
+        """Return the reservation information as a formatted string."""
         return (
             f"Reservierung {self.reservation_id}: "
             f"{self.customer.name}, "

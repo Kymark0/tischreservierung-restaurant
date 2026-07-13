@@ -1,3 +1,5 @@
+"""Streamlit user interface for the restaurant reservation system."""
+
 import streamlit as st
 import re
 
@@ -6,7 +8,9 @@ from indoor_table import IndoorTable
 from outdoor_table import OutdoorTable
 from reservation_system import ReservationSystem
 
+
 def is_valid_email(email: str) -> bool:
+    """Return True if the given email has a valid basic format."""
     email_pattern = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
     return re.match(email_pattern, email) is not None
 
@@ -41,6 +45,7 @@ tab_tables, tab_create_reservation, tab_show_reservations, tab_cancel = st.tabs(
 with tab_tables:
     st.header("Tische verwalten")
 
+    # Input area for creating new tables.
     st.subheader("Tisch hinzufügen")
 
     table_type = st.selectbox(
@@ -87,7 +92,10 @@ with tab_tables:
             if success:
                 st.success("Innentisch wurde hinzugefügt.")
             else:
-                st.error("Es existiert bereits ein Tisch mit dieser Tischnummer.")
+                st.error(
+                    "Es existiert bereits ein Tisch mit dieser "
+                    "Tischnummer."
+                )
 
     else:
         has_heater = st.checkbox("Heizstrahler vorhanden")
@@ -111,8 +119,12 @@ with tab_tables:
             if success:
                 st.success("Außentisch wurde hinzugefügt.")
             else:
-                st.error("Es existiert bereits ein Tisch mit dieser Tischnummer.")
+                st.error(
+                    "Es existiert bereits ein Tisch mit dieser "
+                    "Tischnummer."
+                )
 
+    # Overview and management area for existing tables.
     st.subheader("Vorhandene Tische")
 
     if len(reservation_system.tables) == 0:
@@ -132,42 +144,67 @@ with tab_tables:
 
             with col_status:
                 if table.is_active:
-                    if st.button("Deaktivieren", key=f"deactivate_table_{table.table_number}"):
-                        if reservation_system.has_reservations_for_table(table.table_number):
+                    if st.button(
+                        "Deaktivieren",
+                        key=f"deactivate_table_{table.table_number}"
+                    ):
+                        if reservation_system.has_reservations_for_table(
+                            table.table_number
+                        ):
                             st.error(
                                 "Dieser Tisch kann nicht deaktiviert werden, "
                                 "weil dafür aktive Reservierungen existieren."
                             )
                         else:
-                            success = reservation_system.deactivate_table(table.table_number)
+                            success = reservation_system.deactivate_table(
+                                table.table_number
+                            )
 
                             if success:
-                                st.session_state.success_message = "Tisch wurde deaktiviert."
+                                st.session_state.success_message = (
+                                    "Tisch wurde deaktiviert."
+                                )
                                 st.rerun()
                             else:
                                 st.error("Tisch wurde nicht gefunden.")
                 else:
-                    if st.button("Aktivieren", key=f"activate_table_{table.table_number}"):
-                        success = reservation_system.activate_table(table.table_number)
+                    if st.button(
+                        "Aktivieren",
+                        key=f"activate_table_{table.table_number}"
+                    ):
+                        success = reservation_system.activate_table(
+                            table.table_number
+                        )
 
                         if success:
-                            st.session_state.success_message = "Tisch wurde aktiviert."
+                            st.session_state.success_message = (
+                                "Tisch wurde aktiviert."
+                            )
                             st.rerun()
                         else:
                             st.error("Tisch wurde nicht gefunden.")
 
             with col_delete:
-                if st.button("Löschen", key=f"delete_table_{table.table_number}"):
-                    if reservation_system.has_reservations_for_table(table.table_number):
+                if st.button(
+                    "Löschen",
+                    key=f"delete_table_{table.table_number}"
+                ):
+                    if reservation_system.has_reservations_for_table(
+                        table.table_number
+                    ):
                         st.error(
                             "Dieser Tisch kann nicht gelöscht werden, "
                             "weil dafür Reservierungen existieren."
                         )
                     else:
-                        success = reservation_system.remove_table(table.table_number)
+                        success = reservation_system.remove_table(
+                            table.table_number
+                        )
 
                         if success:
-                            st.session_state.success_message = "Tisch wurde gelöscht."
+                            st.session_state.success_message = (
+                                "Tisch wurde gelöscht."
+                            )
                             st.rerun()
                         else:
                             st.error("Tisch wurde nicht gefunden.")
@@ -184,12 +221,14 @@ with tab_create_reservation:
             "Bitte lege zuerst mindestens einen Tisch an."
         )
     else:
+        # Customer input fields.
         st.subheader("Kundendaten")
 
         customer_name = st.text_input("Name des Kunden")
         phone_number = st.text_input("Telefonnummer")
         email = st.text_input("E-Mail-Adresse optional")
 
+        # Reservation input fields.
         st.subheader("Reservierungsdaten")
 
         reservation_date = st.date_input("Datum")
@@ -207,6 +246,7 @@ with tab_create_reservation:
             step=1
         )
 
+        # Optional table preferences.
         st.subheader("Tischwünsche")
 
         preferred_area = st.selectbox(
@@ -230,8 +270,12 @@ with tab_create_reservation:
 
         elif preferred_area == "Außen":
             wants_heater = st.checkbox("Heizstrahler gewünscht")
-            wants_rainproof = st.checkbox("Regengeschützter Tisch gewünscht")
-            wants_windproof = st.checkbox("Windgeschützter Tisch gewünscht")
+            wants_rainproof = st.checkbox(
+                "Regengeschützter Tisch gewünscht"
+            )
+            wants_windproof = st.checkbox(
+                "Windgeschützter Tisch gewünscht"
+            )
 
             smoking_preference = st.selectbox(
                 "Raucherbereich",
@@ -239,7 +283,11 @@ with tab_create_reservation:
             )
 
         if st.button("Reservierung erstellen"):
-            if customer_name.strip() == "":
+            customer_name = customer_name.strip()
+            phone_number = phone_number.strip()
+            email = email.strip()
+
+            if customer_name == "":
                 st.error("Bitte gib einen Kundennamen ein.")
 
             elif phone_number == "":
